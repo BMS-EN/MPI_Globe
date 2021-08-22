@@ -1,7 +1,10 @@
 IPynb/.ipynb_checkpoints/
+libs/.ipynb_checkpoints
 .ipynb_checkpoints/*
 libs/*pyc
 data/*
+mpi_south/*
+globe_test/*
 *nohup*
 *.log
 *.txt

@@ -4,6 +4,86 @@ from glob import glob
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+def read_ts(date, data_path, lead='96'):
+    '''
+    Moving average and normalize TS files.
+    -----------------------------------------------------
+    The function is operated in the following order:
+        1. Import TS
+        2. TS value cleaning
+    -----------------------------------------------------
+    Input
+        date: the currently forecast initialization date
+        data_path: the file path of ALL the TS files
+        lead: forecast lead time as hours and in string fmt.
+        
+    Output
+        data_ma: a pandas dataframe that contains all the TS; 
+                 it has four columns of 'Date', 'lead', 'OTS', 'ENS', 'FRE'.
+        flag: True for success; False for no files found.
+    '''
+    
+    print(' - Checking TS at '+date)
+
+    base = datetime.strptime(date, '%y%m%d%H') # <------------- The starting date of files
+
+    # loop over raw files
+    # Example filename: 21072108.96 for 2021-07-21 08Z 96H forecast lead time
+    # the line below searches multi-day files by matching: data_path/*08.96
+
+    filename = glob(data_path+'*'+date[-4:]+'.'+lead)
+    
+    # Handle no file cases
+    if len(filename) == 0:
+        print('No files found in {}. Exit ...'.format(data_path))
+        return 0, False
+    else:
+        filename = filename[0] # list to string
+    
+    # The dataframe that contains all the valid TS
+    data_local = pd.DataFrame()
+
+    # temp_data: the dataframe of a single file/lead time
+    # encoding='windows-1252' for windows
+    temp_data = pd.read_csv(filename, delim_whitespace=True, encoding='windows-1252')
+    
+    # Exceping at least five columns for non-empty files
+    ## Skip this file is columns miss matched
+    if len(temp_data.columns) < 5:
+        print('continue')
+        #continue
+
+    ## Import TS
+    ## File head sequence: Date, Lead, tsRR, tsEc, tsT639, tsNcep, tsJap, tsOts, tsEns, tsFre, etc.
+    ## <----- !!! Note: The file head must have the order above
+    else:
+
+        # Discard column 2-7 (tsRR-tsJap)
+        temp_data = temp_data.drop(temp_data.columns[2:7], axis=1)
+        # Discard anything after tsFre
+        temp_data = temp_data.drop(temp_data.columns[5:], axis=1)
+
+        # Rename the pandas dataframe
+        temp_data.columns = ['Date', 'lead', 'EC', 'NCEP', 'GRAPES']
+
+        # Convert str date to datetime format
+        temp_data['Date'] = datetime.strptime(temp_data['Date'][0].astype(str), '%Y%m%d%H')
+
+        # append the current lead time to the overall dataframe
+        data_local = data_local.append(temp_data)
+    
+    # Replace fill-value with NaN
+    data_local = data_local.replace(9999.0, nan)
+
+    # Drop forecast lead time column
+    data_ma = data_local.copy()
+    data_ma = data_ma.drop('lead', 1)
+    
+    # data_ma: TS as a pandas frame, flag of success
+    return data_ma, True
+
+
+
 def norm_ensemble(date, num, data_path, lead='96', backward=True):
     '''
     Moving average and normalize TS files.

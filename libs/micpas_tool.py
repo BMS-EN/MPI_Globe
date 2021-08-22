@@ -8,8 +8,18 @@ from sys import exit
 from os.path import exists
 from scipy.spatial import cKDTree
 from scipy.interpolate import griddata
+from scipy.interpolate import interp2d
 
 from namelist import resx, resy
+
+def interp2d_wraper(nav_lon, nav_lat, grid_z, out_lon, out_lat, method='linear'):
+    '''
+    wrapper of interp2d, works for 2-d grid to grid interp.
+    method = 'linear' or 'cubic'
+    output: grid
+    '''
+    interp_obj = interp2d(nav_lon[0, :], nav_lat[:, 0], grid_z, kind=method)
+    return interp_obj(out_lon[0, :], out_lat[:, 0])
 
 def grid_search(xgrid, ygrid, point_lon, point_lat):
     '''
