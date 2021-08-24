@@ -135,7 +135,7 @@ def main(delta_day, day0, key):
 
     for key, val in dict_var.items():
         for fcst_key in fcst_keys:
-            dict_interp[key][fcst_key] = interp2d_wraper(dict_latlon[key][fcst_key][0], dict_latlon[key][fcst_key][1], val[fcst_key], lon, lat)
+            dict_interp[key][fcst_key] = mt.interp2d_wraper(dict_latlon[key][fcst_key][0], dict_latlon[key][fcst_key][1], val[fcst_key], lon, lat)
 
     # ========== Ensemble Caliberation ========== #
 
