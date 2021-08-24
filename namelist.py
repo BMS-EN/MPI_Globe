@@ -26,16 +26,16 @@ tssc_keys = ['024', '024', '024', '024', '024', '024', '024', '024',
 
 TS_prefix_08Z = '%y%m%d08' # The prefix of TS
 TS_prefix_20Z = '%y%m%d20'
-TS_path   = 'mpi_south/ts/'
+TS_path   = 'U:/'
 
-EC_path_08Z = 'globe_test/ECMWF_GLB/%Y%m%d08'
-NCEP_path_08Z = 'globe_test/NCEP_GLB/%Y%m%d08'
-GRAPES_path_08Z = 'globe_test/GRAPES-GLB/%Y%m%d08'
+EC_path_08Z = 'S:/model/ECMWF_GLB/%Y%m%d08'
+NCEP_path_08Z = 'S:/model/NCEP_GLB/%Y%m%d08'
+GRAPES_path_08Z = 'S:/model/GRAPES-GLB/%Y%m%d08'
 filename_08Z = '%Y%m%d08.'
 
-EC_path_20Z = 'globe_test/ECMWF_GLB/%Y%m%d20'
-NCEP_path_20Z = 'globe_test/NCEP_GLB/%Y%m%d20'
-GRAPES_path_20Z = 'globe_test/GRAPES-GLB/%Y%m%d20'
+EC_path_20Z = 'S:/model/ECMWF_GLB/%Y%m%d20'
+NCEP_path_20Z = 'S:/model/NCEP_GLB/%Y%m%d20'
+GRAPES_path_20Z = 'S:/model/GRAPES-GLB/%Y%m%d20'
 filename_20Z = '%Y%m%d20.'
 
 # Output filename
