@@ -179,7 +179,8 @@ def main(delta_day, day0, key):
             # case: regular (good quality) weights
             else:
                 for cmpt_key in cmpt_keys:
-                    temp = data_ma[cmpt_key][9:10].values
+                    temp = data_ma[cmpt_key][0]
+
                     if np.isnan(temp):
                         temp = 0.0
                     W[prec_key][tssc_key][cmpt_key] = temp
