@@ -1,5 +1,5 @@
-IPynb/.ipynb_checkpoints/
-libs/.ipynb_checkpoints
+IPynb/.ipynb_checkpoints/*
+libs/.ipynb_checkpoints/*
 .ipynb_checkpoints/*
 libs/*pyc
 data/*
