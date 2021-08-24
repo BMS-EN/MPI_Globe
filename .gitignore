@@ -3,8 +3,8 @@ libs/.ipynb_checkpoints
 .ipynb_checkpoints/*
 libs/*pyc
 data/*
-mpi_south/*
-globe_test/*
+MPI_test_08/*
+MPI_test_20/*
 *nohup*
 *.log
 *.txt
