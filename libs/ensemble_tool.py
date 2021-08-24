@@ -30,12 +30,15 @@ def read_ts(date, data_path, lead='96'):
     # loop over raw files
     # Example filename: 21072108.96 for 2021-07-21 08Z 96H forecast lead time
     # the line below searches multi-day files by matching: data_path/*08.96
-
-    filename = glob(data_path+'*'+date[-4:]+'.'+lead)
+    
+    name_ = data_path+'*'+date[-4:]+'.'+lead
+    print(' - Checking: {}'.format(name_))
+    
+    filename = glob(name_)
     
     # Handle no file cases
     if len(filename) == 0:
-        print('No files found in {}. Exit ...'.format(data_path))
+        print('No files found. Exit ...')
         return 0, False
     else:
         filename = filename[0] # list to string
