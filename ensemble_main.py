@@ -213,7 +213,7 @@ def main(delta_day, day0, key):
         precip0 = 0.5*data0_EC + 0.5*data0_NCEP
         precip25 = (1/3)*data25_EC + (1/3)*data25_NCEP + (1/3)*data50_GRAPES
         precip50 = (W_EC*data50_EC + W_NCEP*data50_NCEP + W_GRAPES*data50_GRAPES)/(W_EC+W_NCEP+W_GRAPES)
-
+        print('{}:{}:{}'.format(np.sum(np.isnan(precip0)), np.sum(np.isnan(precip25)), np.sum(np.isnan(precip50))))
         output[fcst_keys[i]] = precip0 + precip25 + precip50
 
         # =========================================== #
