@@ -205,6 +205,14 @@ def main(delta_day, day0, key):
         W_EC = W[thres][tssc_keys[i]]['EC']
         W_NCEP = W[thres][tssc_keys[i]]['NCEP']
         W_GRAPES = W[thres][tssc_keys[i]]['GRAPES']
+        
+        print('TS EC:{}; TS NCEP: {}; TS: GRAPES {}'.format(W_EC, W_NCEP, W_GRAPES))
+        W_sum = W_EC+W_NCEP+W_GRAPES
+        
+        if W_sum == 0 or np.isnan(W_sum):
+            W_EC = 1/3
+            W_NCEP = 1/3
+            W_GRAPES = 1/3
 
         data0_EC, data25_EC, data50_EC = subtrack_precip_lev(dict_interp['EC'][fcst_keys[i]])
         data0_NCEP, data25_NCEP, data50_NCEP = subtrack_precip_lev(dict_interp['NCEP'][fcst_keys[i]])
@@ -213,7 +221,7 @@ def main(delta_day, day0, key):
         precip0 = 0.5*data0_EC + 0.5*data0_NCEP
         precip25 = (1/3)*data25_EC + (1/3)*data25_NCEP + (1/3)*data50_GRAPES
         precip50 = (W_EC*data50_EC + W_NCEP*data50_NCEP + W_GRAPES*data50_GRAPES)/(W_EC+W_NCEP+W_GRAPES)
-        print('{}:{}:{}'.format(np.sum(np.isnan(precip0)), np.sum(np.isnan(precip25)), np.sum(np.isnan(precip50))))
+
         output[fcst_keys[i]] = precip0 + precip25 + precip50
 
         # =========================================== #
