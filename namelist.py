@@ -26,11 +26,11 @@ tssc_keys = ['024', '024', '024', '024', '024', '024', '024', '024',
 
 TS_prefix_08Z = '%y%m%d08' # The prefix of TS
 TS_prefix_20Z = '%y%m%d20'
-TS_path   = 'MPI_test_08/TS/' # 'U:/' #
+TS_path   = 'U:/' # 'MPI_test_08/TS/' # 
 
-EC_path_08Z = 'MPI_test_08/ECMWF_GLB/%Y%m%d08' # 'S:/model/ECMWF_GLB/%Y%m%d08'
-NCEP_path_08Z = 'MPI_test_08/NCEP_GLB/%Y%m%d08' # 'S:/model/NCEP_GLB/%Y%m%d08'
-GRAPES_path_08Z = 'MPI_test_08/GRAPES-GLB/%Y%m%d08' # 'S:/model/GRAPES-GLB/%Y%m%d08'
+EC_path_08Z = 'S:/model/ECMWF_GLB/%Y%m%d08' # 'MPI_test_08/ECMWF_GLB/%Y%m%d08' # 
+NCEP_path_08Z = 'S:/model/NCEP_GLB/%Y%m%d08' # 'MPI_test_08/NCEP_GLB/%Y%m%d08' # 
+GRAPES_path_08Z = 'S:/model/GRAPES-GLB/%Y%m%d08' # 'MPI_test_08/GRAPES-GLB/%Y%m%d08' # 
 filename_08Z = '%Y%m%d08.'
 
 EC_path_20Z = 'S:/model/ECMWF_GLB/%Y%m%d20' #'MPI_test_20/ECMWF_GLB/%Y%m%d20'
@@ -40,5 +40,5 @@ filename_20Z = '%Y%m%d20.'
 
 # Output filename
 tag_name = 'MPI_Globe' # the name appears in the micaps file header
-output_name_08Z = 'MPI_Globe_%Y%m%d08_' # 'S:/mpi_globe/MPI_Globe_%Y%m%d08_' 
+output_name_08Z = 'S:/mpi_globe/MPI_Globe_%Y%m%d08_' #'MPI_Globe_%Y%m%d08_' # 
 output_name_20Z = 'S:/mpi_globe/MPI_Globe_%Y%m%d20_' #'MPI_Globe_%Y%m%d08_'
