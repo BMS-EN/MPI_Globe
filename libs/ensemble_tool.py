@@ -60,14 +60,12 @@ def read_ts(date, data_path, lead='96'):
     ## File head sequence: Date, Lead, tsRR, tsEc, tsT639, tsNcep, tsJap, tsOts, tsEns, tsFre, etc.
     ## <----- !!! Note: The file head must have the order above
     else:
-
-        # Discard column 2-7 (tsRR-tsJap)
-        temp_data = temp_data.drop(temp_data.columns[2:7], axis=1)
-        # Discard anything after tsFre
-        temp_data = temp_data.drop(temp_data.columns[5:], axis=1)
-
+        # Discard anything after tsNcep
+        temp_data = temp_data.drop(temp_data.columns[6:], axis=1)
+        # Discard column 2 (tsRR)
+        temp_data = temp_data.drop(temp_data.columns[2], axis=1)
         # Rename the pandas dataframe
-        temp_data.columns = ['Date', 'lead', 'EC', 'NCEP', 'GRAPES']
+        temp_data.columns = ['Date', 'lead', 'EC', 'GRAPES', 'NCEP',]
 
         # Convert str date to datetime format
         temp_data['Date'] = datetime.strptime(temp_data['Date'][0].astype(str), '%Y%m%d%H')
