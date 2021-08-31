@@ -5,6 +5,7 @@ libs/*pyc
 data/*
 MPI_test_08/*
 MPI_test_20/*
+Test*
 *nohup*
 *.log
 *.txt
