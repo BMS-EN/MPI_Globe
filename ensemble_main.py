@@ -138,10 +138,8 @@ def main(delta_day, day0, key):
             dict_interp[key][fcst_key] = mt.interp2d_wraper(dict_latlon[key][fcst_key][0], dict_latlon[key][fcst_key][1], val[fcst_key], lon, lat)
 
     # ========== Ensemble Caliberation ========== #
-
-    print('Estimating calibration weights')
-
-    # ---------- Extracting weights ---------- #
+    
+    # ---------- Extracting TS ---------- #
     # initialization
     # W[precip threshold][fcst lead time][model component]
 

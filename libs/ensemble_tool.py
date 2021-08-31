@@ -53,17 +53,12 @@ def read_ts(date, data_path, lead='96'):
     # Exceping at least five columns for non-empty files
     ## Skip this file is columns miss matched
     if len(temp_data.columns) < 5:
-        print('continue')
-        #continue
+        print('TS format incorrect.')
+        exit()
 
     ## Import TS
-    ## File head sequence: Date, Lead, tsRR, tsEc, tsT639, tsNcep, tsJap, tsOts, tsEns, tsFre, etc.
-    ## <----- !!! Note: The file head must have the order above
+    ## File head sequence: Date, Lead, tsec, tsgrapes, tsncep
     else:
-        # Discard anything after tsNcep
-        temp_data = temp_data.drop(temp_data.columns[6:], axis=1)
-        # Discard column 2 (tsRR)
-        temp_data = temp_data.drop(temp_data.columns[2], axis=1)
         # Rename the pandas dataframe
         temp_data.columns = ['Date', 'lead', 'EC', 'GRAPES', 'NCEP',]
 
@@ -82,8 +77,6 @@ def read_ts(date, data_path, lead='96'):
     
     # data_ma: TS as a pandas frame, flag of success
     return data_ma, True
-
-
 
 def norm_ensemble(date, num, data_path, lead='96', backward=True):
     '''
