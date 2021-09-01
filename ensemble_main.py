@@ -109,8 +109,10 @@ def main(delta_day, day0, key, lead='03'):
                 dict_var[cmpt_keys[i]][fcst_key] = temp[2]
 
         # modify the input file head and use it as the output file head
-
-        fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key)-3.0)
+        if lead == '03':
+            fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key)-3.0)
+        else:
+            fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key)-4.0)
 
         temp[3][0] += fcst_key + datetime.strftime(fcst_time_, '_%Y%m%d%H')
         dict_header[fcst_key] = temp[3]
