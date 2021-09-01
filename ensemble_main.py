@@ -32,7 +32,7 @@ def dummy_module(delta_day, day0):
     return date_ref.day
 
 def main(delta_day, day0, key):
-  '''
+    '''
     The main routine of ensemble precipitation post-porcessing. 
     '''
     if key == 20:
@@ -136,8 +136,8 @@ def main(delta_day, day0, key):
     for key, val in dict_var.items():
         for fcst_key in fcst_keys:
             dict_interp[key][fcst_key] = mt.interp2d_wraper(dict_latlon[key][fcst_key][0], dict_latlon[key][fcst_key][1], val[fcst_key], lon, lat)
-            
-            
+
+
     print('\tExtracting TS for {} mm events'.format(prec_keys_TS))
 
     W = {}; W = ini_dicts(W, prec_keys_TS)
@@ -212,6 +212,15 @@ def main(delta_day, day0, key):
         W_NCEP = W[thres][tssc_keys[i]]['NCEP']
         W_GRAPES = W[thres][tssc_keys[i]]['GRAPES']
 
+    #         #Debugging only
+    #         #print('TS EC:{}; TS NCEP: {}; TS: GRAPES {}'.format(W_EC, W_NCEP, W_GRAPES))
+    #         W_sum = W_EC+W_NCEP+W_GRAPES
+
+    #         if W_sum == 0 or np.isnan(W_sum):
+    #             W_EC = 1/3
+    #             W_NCEP = 1/3
+    #             W_GRAPES = 1/3
+
         data0_EC, data25_EC, data50_EC = subtrack_precip_lev(dict_interp['EC'][fcst_keys[i]])
         data0_NCEP, data25_NCEP, data50_NCEP = subtrack_precip_lev(dict_interp['NCEP'][fcst_keys[i]])
         data0_GRAPES, data25_GRAPES, data50_GRAPES = subtrack_precip_lev(dict_interp['GRAPES'][fcst_keys[i]])
@@ -221,7 +230,7 @@ def main(delta_day, day0, key):
         precip50 = (W_EC*data50_EC + W_NCEP*data50_NCEP + W_GRAPES*data50_GRAPES)/(W_EC+W_NCEP+W_GRAPES)
 
         output[fcst_keys[i]] = precip0 + precip25 + precip50
-        
+
     # Preparing MICAPS file output
     for fcst_key in fcst_keys:
         metadata = mt.micaps_change_header(lon.shape, dict_header[fcst_key], lonlim, latlim)
