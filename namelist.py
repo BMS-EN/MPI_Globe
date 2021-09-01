@@ -28,7 +28,7 @@ tssc_keys_24 = ['096', '120', '144', '168', '192', '216', '240']
 
 TS_prefix_08Z = '%y%m%d08' # The prefix of TS
 TS_prefix_20Z = '%y%m%d20'
-TS_path   = 'U:/' # 'Test_TS/'
+TS_path   = 'S:/model/TS/' # 'Test_TS/'
 
 EC_path_08Z = 'S:/model/ECMWF_GLB/%Y%m%d08' #  # 'Test_model/ECMWF_GLB/%Y%m%d08'
 NCEP_path_08Z = 'S:/model/NCEP_GLB/%Y%m%d08' #  # 'Test_model/NCEP_GLB/%Y%m%d08'
