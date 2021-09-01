@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # import keywords from the namelist
-from namelist import lib_path, prec_keys_TS, TS_path, tag_name, lonlim, latlim, fcst_keys_03, fcst_keys_24, tssc_keys_03, tssc_keys_24, \
+from namelist import lib_path, prec_keys_TS, TS_path, lonlim, latlim, fcst_keys_03, fcst_keys_24, tssc_keys_03, tssc_keys_24, \
                      filename_08Z, TS_prefix_08Z, NCEP_path_08Z, EC_path_08Z, GRAPES_path_08Z, output_name_08Z_03, output_name_08Z_24, \
                      filename_20Z, TS_prefix_20Z, NCEP_path_20Z, EC_path_20Z, GRAPES_path_20Z, output_name_20Z_03, output_name_20Z_24
 
@@ -35,8 +35,6 @@ def main(delta_day, day0, key, lead='03'):
     '''
     The main routine of ensemble precipitation post-porcessing. 
     '''
-
-        
     if lead == '03':
         fcst_keys = fcst_keys_03
         tssc_keys = tssc_keys_03
@@ -49,7 +47,7 @@ def main(delta_day, day0, key, lead='03'):
         subpath = '/pre24/'
         output_name_08Z = output_name_08Z_24
         output_name_20Z = output_name_20Z_24
-        
+
     if key == 20:
         TS_prefix = TS_prefix_20Z
         NCEP_path = NCEP_path_20Z
@@ -95,7 +93,7 @@ def main(delta_day, day0, key, lead='03'):
     for fcst_key in fcst_keys:
 
         lead = np.float(fcst_key)
-        
+
         for i, name in enumerate(name_today):
 
             # identify the file path
@@ -111,7 +109,10 @@ def main(delta_day, day0, key, lead='03'):
                 dict_var[cmpt_keys[i]][fcst_key] = temp[2]
 
         # modify the input file head and use it as the output file head
-        temp[3][0] = temp[3][0].replace("FZMOS", tag_name)
+
+        fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key)-3.0)
+
+        temp[3][0] += fcst_key + datetime.strftime(fcst_time_, '_%Y%m%d%H')
         dict_header[fcst_key] = temp[3]
 
     # Get latlon info
@@ -131,13 +132,6 @@ def main(delta_day, day0, key, lead='03'):
 
             temp_name = name+subpath+datetime.strftime(date_BJ, filename)+fcst_key
             dict_latlon[cmpt_keys[i]][fcst_key] = mt.micaps_import(temp_name, export_data=False)
-
-    # diff_latlon = 0
-    # diff_latlon += np.sum(np.abs(dict_latlon['EC']['024'][0] - lon)) + np.sum(np.abs(dict_latlon['EC']['024'][1] - lat))
-    # diff_latlon += np.sum(np.abs(dict_latlon['NCEP']['024'][0] - lon)) + np.sum(np.abs(dict_latlon['NCEP']['024'][1] - lat))
-    # diff_latlon += np.sum(np.abs(dict_latlon['GRAPES']['024'][0] - lon)) + np.sum(np.abs(dict_latlon['GRAPES']['024'][1] - lat))
-
-    # interpolate to the output latlon if they mismatched
 
     print('Warning: input and output coordinates mismatched. Fixing with bilinear interpolation.')
 
@@ -222,15 +216,6 @@ def main(delta_day, day0, key, lead='03'):
         W_NCEP = W[thres][tssc_keys[i]]['NCEP']
         W_GRAPES = W[thres][tssc_keys[i]]['GRAPES']
 
-    #         #Debugging only
-    #         #print('TS EC:{}; TS NCEP: {}; TS: GRAPES {}'.format(W_EC, W_NCEP, W_GRAPES))
-    #         W_sum = W_EC+W_NCEP+W_GRAPES
-
-    #         if W_sum == 0 or np.isnan(W_sum):
-    #             W_EC = 1/3
-    #             W_NCEP = 1/3
-    #             W_GRAPES = 1/3
-
         data0_EC, data25_EC, data50_EC = subtrack_precip_lev(dict_interp['EC'][fcst_keys[i]])
         data0_NCEP, data25_NCEP, data50_NCEP = subtrack_precip_lev(dict_interp['NCEP'][fcst_keys[i]])
         data0_GRAPES, data25_GRAPES, data50_GRAPES = subtrack_precip_lev(dict_interp['GRAPES'][fcst_keys[i]])
@@ -243,12 +228,8 @@ def main(delta_day, day0, key, lead='03'):
 
     # Preparing MICAPS file output
     for fcst_key in fcst_keys:
-        
         metadata = mt.micaps_change_header(lon.shape, dict_header[fcst_key], lonlim, latlim)
-        
-        fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key))
-        
-        mt.micaps_export(datetime.strftime(date_BJ, output_name)+fcst_key+datetime.strftime(fcst_time_, '_%Y%m%d%H.txt'), metadata, output[fcst_key])
+        mt.micaps_export(datetime.strftime(date_BJ, output_name)+fcst_key+'.txt', metadata, output[fcst_key])
 
     print('Ensemble post-processing complete')
 
