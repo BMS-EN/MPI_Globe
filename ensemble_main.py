@@ -243,15 +243,21 @@ def main(delta_day, day0, key, lead='03'):
 
     # Preparing MICAPS file output
     for fcst_key in fcst_keys:
+        
         metadata = mt.micaps_change_header(lon.shape, dict_header[fcst_key], lonlim, latlim)
-        mt.micaps_export(datetime.strftime(date_BJ, output_name)+fcst_key+'.txt', metadata, output[fcst_key])
+        
+        fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key))
+        
+        mt.micaps_export(datetime.strftime(date_BJ, output_name)+fcst_key+datetime.strftime(fcst_time_, '_%Y%m%d%H.txt'), metadata, output[fcst_key])
 
     print('Ensemble post-processing complete')
 
     # =========================================== #    
     return date_ref.day
 
-day_out = main(int(argv[1]), int(argv[2]), int(argv[3]))
+day_out = main(int(argv[1]), int(argv[2]), int(argv[3]), lead='03')
+day_out = main(int(argv[1]), int(argv[2]), int(argv[3]), lead='24')
+
 with open('shaG_history.log', 'w') as fp:
     fp.write(str(day_out).zfill(2)) # exporting the day of completion (and where to restart if fails)
 

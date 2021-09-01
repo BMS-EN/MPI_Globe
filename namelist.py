@@ -42,7 +42,7 @@ filename_20Z = '%Y%m%d20.'
 
 # Output filename
 tag_name = 'MPI_Globe' # the name appears in the micaps file header
-output_name_08Z_03 = 'S:/mpi_globe/pre03/MPI_Globe_%Y%m%d08_' # 'MPI_Globe_%Y%m%d08_'
-output_name_20Z_03 = 'S:/mpi_globe/pre03/MPI_Globe_%Y%m%d20_' # 'MPI_Globe_%Y%m%d08_'
-output_name_08Z_24 = 'S:/mpi_globe/pre24/MPI_Globe_%Y%m%d08_' # 'MPI_Globe_%Y%m%d08_'
-output_name_20Z_24 = 'S:/mpi_globe/pre24/MPI_Globe_%Y%m%d20_' # 'MPI_Globe_%Y%m%d08_'
+output_name_08Z_03 = 'S:/mpi_globe/pre03/%Y%m%d08_' # 'MPI_Globe_%Y%m%d08_'
+output_name_20Z_03 = 'S:/mpi_globe/pre03/%Y%m%d20_' # 'MPI_Globe_%Y%m%d08_'
+output_name_08Z_24 = 'S:/mpi_globe/pre24/%Y%m%d08_' # 'MPI_Globe_%Y%m%d08_'
+output_name_20Z_24 = 'S:/mpi_globe/pre24/%Y%m%d20_' # 'MPI_Globe_%Y%m%d08_'
