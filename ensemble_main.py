@@ -32,7 +32,7 @@ def dummy_module(delta_day, day0):
     return date_ref.day
 
 def main(delta_day, day0, key):
-    '''
+  '''
     The main routine of ensemble precipitation post-porcessing. 
     '''
     if key == 20:
@@ -96,7 +96,7 @@ def main(delta_day, day0, key):
 
             if temp == False:
                 print(temp_name+' not found. Exit ...')
-                return day0
+                #return day0
             else:
                 dict_var[cmpt_keys[i]][fcst_key] = temp[2]
 
@@ -136,13 +136,8 @@ def main(delta_day, day0, key):
     for key, val in dict_var.items():
         for fcst_key in fcst_keys:
             dict_interp[key][fcst_key] = mt.interp2d_wraper(dict_latlon[key][fcst_key][0], dict_latlon[key][fcst_key][1], val[fcst_key], lon, lat)
-
-    # ========== Ensemble Caliberation ========== #
-    
-    # ---------- Extracting TS ---------- #
-    # initialization
-    # W[precip threshold][fcst lead time][model component]
-
+            
+            
     print('\tExtracting TS for {} mm events'.format(prec_keys_TS))
 
     W = {}; W = ini_dicts(W, prec_keys_TS)
@@ -154,7 +149,7 @@ def main(delta_day, day0, key):
         for tssc_key in tssc_keys:
 
             # retreive ts files by the fcst delay
-            date_temp = date_ref - relativedelta(days=int(tssc_key)/24) # from fcst horizon (i.e., hours) to days
+            date_temp = date_ref - relativedelta(days=int(tssc_key)/24+1) # "+1" for the one-day delay of TS 
 
             # reading TS from selected files + TS moving average
             ## The moving averaging considers 10 days backward 
@@ -163,25 +158,38 @@ def main(delta_day, day0, key):
             # saving weights to the dictionary
             # case: no TS files (flag_TS=False)
             if np.logical_not(flag_TS):
-                print("TS files do not exist. Exit.")
-                return day0 # <--- exit if no TS files
+                print("TS files do not exist. Attempting one day backward")
 
-            # case: TS filled with NaNs (vals = 9999.0)
+                date_temp = date_ref - relativedelta(days=int(tssc_key)/24+2)
+                data_ma, flag_TS = et.read_ts(date_temp.strftime(TS_prefix), TS_path+prec_key+'/', lead=tssc_key)
+
+                if np.logical_not(flag_TS):
+                    print("TS files do not exist. Skip.") 
+
+                #return day0 # <--- exit if no TS files
+
+            # case: TS filled with NaNs (vals = 9999.0) or filled with 0
             ## Use TS=0.5
-            elif np.isnan(data_ma.values[-1, 1:].astype(np.float)).sum() >= 3:
-                print('Warning: TS filled with NaNs, use average.')
-                for cmpt_key in cmpt_keys:
-                    W[prec_key][tssc_key][cmpt_key] = 0.5
-                flag_heavy = False
 
-            # case: regular (good quality) weights
             else:
-                for cmpt_key in cmpt_keys:
-                    temp = data_ma[cmpt_key][0]
 
-                    if np.isnan(temp):
-                        temp = 0.0
-                    W[prec_key][tssc_key][cmpt_key] = temp
+                flag_nan = np.sum(np.isnan(data_ma.values[-1, 1:].astype(np.float))) >= 3
+                flag_zero = np.sum(0 == (data_ma.values[-1, 1:].astype(np.float)) ) >= 3
+
+                if flag_nan or flag_zero:
+                    print('Warning: TS filled with NaNs or zeros, use average (TS = 1/3).')
+                    for cmpt_key in cmpt_keys:
+                        W[prec_key][tssc_key][cmpt_key] = 1/3
+                    flag_heavy = False
+
+                # case: regular (good quality) weights
+                else:
+                    for cmpt_key in cmpt_keys:
+                        temp = data_ma[cmpt_key][0]
+
+                        if np.isnan(temp):
+                            temp = 0.0
+                        W[prec_key][tssc_key][cmpt_key] = temp
 
     # Calculate ensembles
     print('Preparing output')
@@ -203,14 +211,6 @@ def main(delta_day, day0, key):
         W_EC = W[thres][tssc_keys[i]]['EC']
         W_NCEP = W[thres][tssc_keys[i]]['NCEP']
         W_GRAPES = W[thres][tssc_keys[i]]['GRAPES']
-        
-        print('TS EC:{}; TS NCEP: {}; TS: GRAPES {}'.format(W_EC, W_NCEP, W_GRAPES))
-        W_sum = W_EC+W_NCEP+W_GRAPES
-        
-        if W_sum == 0 or np.isnan(W_sum):
-            W_EC = 1/3
-            W_NCEP = 1/3
-            W_GRAPES = 1/3
 
         data0_EC, data25_EC, data50_EC = subtrack_precip_lev(dict_interp['EC'][fcst_keys[i]])
         data0_NCEP, data25_NCEP, data50_NCEP = subtrack_precip_lev(dict_interp['NCEP'][fcst_keys[i]])
@@ -221,16 +221,15 @@ def main(delta_day, day0, key):
         precip50 = (W_EC*data50_EC + W_NCEP*data50_NCEP + W_GRAPES*data50_GRAPES)/(W_EC+W_NCEP+W_GRAPES)
 
         output[fcst_keys[i]] = precip0 + precip25 + precip50
-
-        # =========================================== #
-
+        
     # Preparing MICAPS file output
     for fcst_key in fcst_keys:
         metadata = mt.micaps_change_header(lon.shape, dict_header[fcst_key], lonlim, latlim)
         mt.micaps_export(datetime.strftime(date_BJ, output_name)+fcst_key+'.txt', metadata, output[fcst_key])
 
     print('Ensemble post-processing complete')
-    
+
+    # =========================================== #    
     return date_ref.day
 
 day_out = main(int(argv[1]), int(argv[2]), int(argv[3]))
