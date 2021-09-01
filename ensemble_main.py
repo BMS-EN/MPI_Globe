@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # import keywords from the namelist
-from namelist import lib_path, prec_keys_TS, TS_path, tag_name, lonlim, latlim, fcst_keys, tssc_keys, \
-                     filename_08Z, TS_prefix_08Z, NCEP_path_08Z, EC_path_08Z, GRAPES_path_08Z, output_name_08Z, \
-                     filename_20Z, TS_prefix_20Z, NCEP_path_20Z, EC_path_20Z, GRAPES_path_20Z, output_name_20Z
+from namelist import lib_path, prec_keys_TS, TS_path, tag_name, lonlim, latlim, fcst_keys_03, fcst_keys_24, tssc_keys_03, tssc_keys_24, \
+                     filename_08Z, TS_prefix_08Z, NCEP_path_08Z, EC_path_08Z, GRAPES_path_08Z, output_name_08Z_03, output_name_08Z_24, \
+                     filename_20Z, TS_prefix_20Z, NCEP_path_20Z, EC_path_20Z, GRAPES_path_20Z, output_name_20Z_03, output_name_20Z_24
 
 from sys import path, argv
 path.insert(0, lib_path)
@@ -31,10 +31,25 @@ def dummy_module(delta_day, day0):
     print('The main routine runs at '+date_ref.strftime('%Y%m%d'))
     return date_ref.day
 
-def main(delta_day, day0, key):
+def main(delta_day, day0, key, lead='03'):
     '''
     The main routine of ensemble precipitation post-porcessing. 
     '''
+
+        
+    if lead == '03':
+        fcst_keys = fcst_keys_03
+        tssc_keys = tssc_keys_03
+        subpath = '/pre03/'
+        output_name_08Z = output_name_08Z_03
+        output_name_20Z = output_name_20Z_03
+    else:
+        fcst_keys = fcst_keys_24
+        tssc_keys = tssc_keys_24
+        subpath = '/pre24/'
+        output_name_08Z = output_name_08Z_24
+        output_name_20Z = output_name_20Z_24
+        
     if key == 20:
         TS_prefix = TS_prefix_20Z
         NCEP_path = NCEP_path_20Z
@@ -80,12 +95,7 @@ def main(delta_day, day0, key):
     for fcst_key in fcst_keys:
 
         lead = np.float(fcst_key)
-
-        if lead%24 == 0:
-            subpath = '/pre24/'
-        else:
-            subpath = '/pre03/'
-
+        
         for i, name in enumerate(name_today):
 
             # identify the file path
