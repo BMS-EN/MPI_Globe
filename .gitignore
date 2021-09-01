@@ -10,4 +10,4 @@ Test*
 *.log
 *.txt
 *.pyc
-Untitled*.ipynb
+#Untitled*.ipynb
