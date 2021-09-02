@@ -13,7 +13,7 @@ run=true
 
 while $run; do
     # get the current datetime
-    current_time=$(date -u +%Y%m%d%H)
+    current_time=$(date +%Y%m%d%H)
     day=$[10#${current_time:6:2}]
     delta_day=$[$day0 - $day]
     if [ $delta_day -gt 0 ]; then

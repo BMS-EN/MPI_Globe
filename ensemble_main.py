@@ -110,11 +110,13 @@ def main(delta_day, day0, key, lead='03'):
 
         # modify the input file head and use it as the output file head
         if lead == '03':
-            fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key)-3.0)
+            fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key))
         else:
-            fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key)-4.0)
+            fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key))
 
         temp[3][0] += fcst_key + datetime.strftime(fcst_time_, '_%Y%m%d%H')
+        print(temp[3][0])
+        
         dict_header[fcst_key] = temp[3]
 
     # Get latlon info
