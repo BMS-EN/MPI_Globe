@@ -69,6 +69,9 @@ def main(delta_day, day0, key, lead='03'):
     date_BJ = date_ref_delay+relativedelta(hours=8)
 
     print('Ensemble post-processing starts at ['+date_ref.strftime('%Y%m%d-%H:%M%p')+'] UTC')
+    
+    print('date_ref: {}\ndate_ref_delay: {}\ndate_BJ: {}'.format(date_ref, date_ref_delay, date_BJ))
+    
     name_today = []
 
     name_today.append(datetime.strftime(date_BJ, EC_path))
