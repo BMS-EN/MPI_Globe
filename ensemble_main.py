@@ -66,8 +66,8 @@ def main(delta_day, day0, key, lead='03'):
     # UTC time corrections & filename creation
     date_ref = datetime.utcnow()+relativedelta(days=delta_day)
     date_ref_delay = date_ref-relativedelta(days=1) # use yesterday's forecast
-    date_BJ = date_ref_delay+relativedelta(hours=8)
-
+    date_BJ = date_ref_delay+relativedelta(hours=8+2) # test with 2-hour ahead opt
+    
     print('Ensemble post-processing starts at ['+date_ref.strftime('%Y%m%d-%H:%M%p')+'] UTC')
     
     print('date_ref: {}\ndate_ref_delay: {}\ndate_BJ: {}'.format(date_ref, date_ref_delay, date_BJ))
@@ -112,10 +112,12 @@ def main(delta_day, day0, key, lead='03'):
                 dict_var[cmpt_keys[i]][fcst_key] = temp[2]
 
         # modify the input file head and use it as the output file head
-        if lead == '03':
-            fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key))
+        if key == 20:
+            ini_time = datetime(date_BJ.year, date_BJ.month, date_BJ.day, 20)
+            fcst_time_ = ini_time + relativedelta(hours=np.float(fcst_key))
         else:
-            fcst_time_ = date_BJ + relativedelta(hours=np.float(fcst_key))
+            ini_time = datetime(date_BJ.year, date_BJ.month, date_BJ.day, 8)
+            fcst_time_ = ini_time + relativedelta(hours=np.float(fcst_key))
 
         temp[3][0] += fcst_key + datetime.strftime(fcst_time_, '_%Y%m%d%H')
         print(temp[3][0])
