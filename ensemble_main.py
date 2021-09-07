@@ -67,7 +67,12 @@ def main(delta_day, day0, key, lead='03'):
     
     # UTC time corrections & filename creation
     date_ref = datetime.utcnow()+relativedelta(days=delta_day)
-    date_ref_delay = date_ref #-relativedelta(days=1) # use yesterday's forecast
+    if key == 20:
+      date_ref_delay = date_ref -relativedelta(days=1) # use yesterday's forecast
+      
+    else:
+      date_ref_delay = date_ref
+      
     date_BJ = date_ref_delay+relativedelta(hours=8+2) # test with 2-hour ahead opt
     
     print('Ensemble post-processing starts at ['+date_ref.strftime('%Y%m%d-%H:%M%p')+'] UTC')
