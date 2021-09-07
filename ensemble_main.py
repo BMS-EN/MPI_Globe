@@ -107,7 +107,7 @@ def main(delta_day, day0, key, lead='03'):
 
             if temp == False:
                 print(temp_name+' not found. Exit ...')
-                #return day0
+                return day0
             else:
                 dict_var[cmpt_keys[i]][fcst_key] = temp[2]
 
