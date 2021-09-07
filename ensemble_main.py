@@ -62,10 +62,12 @@ def main(delta_day, day0, key, lead='03'):
         GRAPES_path = GRAPES_path_08Z
         filename = filename_08Z
         output_name = output_name_08Z
-
+  
+    print('delta_day: {}; day0:{}'.format(delta_day, day0))
+    
     # UTC time corrections & filename creation
     date_ref = datetime.utcnow()+relativedelta(days=delta_day)
-    date_ref_delay = date_ref-relativedelta(days=1) # use yesterday's forecast
+    date_ref_delay = date_ref #-relativedelta(days=1) # use yesterday's forecast
     date_BJ = date_ref_delay+relativedelta(hours=8+2) # test with 2-hour ahead opt
     
     print('Ensemble post-processing starts at ['+date_ref.strftime('%Y%m%d-%H:%M%p')+'] UTC')
