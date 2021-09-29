@@ -8,7 +8,7 @@
 
 filename='shaG_history.log'
 current_time=$(date -u +%Y%m%d%H)
-day0=25; #count=0
+day0=2; #count=0
 run=true
 
 while $run; do
