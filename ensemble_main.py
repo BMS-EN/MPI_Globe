@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # import keywords from the namelist
-from namelist_ubc import lib_path, prec_keys_TS, TS_path, lonlim, latlim, \
+from namelist import lib_path, prec_keys_TS, TS_path, lonlim, latlim, \
                      fcst_keys_03, fcst_keys_06, fcst_keys_24, \
                      tssc_keys_03, tssc_keys_06, tssc_keys_24, \
                      filename_08Z, TS_prefix_08Z, \
