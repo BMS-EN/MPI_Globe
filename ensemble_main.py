@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 # import keywords from the namelist
-from namelist import lib_path, prec_keys_TS, TS_path, lonlim, latlim, fcst_keys_03, fcst_keys_24, tssc_keys_03, tssc_keys_24, \
-                     filename_08Z, TS_prefix_08Z, NCEP_path_08Z, EC_path_08Z, GRAPES_path_08Z, output_name_08Z_03, output_name_08Z_24, \
-                     filename_20Z, TS_prefix_20Z, NCEP_path_20Z, EC_path_20Z, GRAPES_path_20Z, output_name_20Z_03, output_name_20Z_24
+from namelist_ubc import lib_path, prec_keys_TS, TS_path, lonlim, latlim, \
+                     fcst_keys_03, fcst_keys_06, fcst_keys_24, \
+                     tssc_keys_03, tssc_keys_06, tssc_keys_24, \
+                     filename_08Z, TS_prefix_08Z, \
+                     NCEP_path_08Z, EC_path_08Z, GRAPES_path_08Z, \
+                     output_name_08Z_03, output_name_08Z_06, output_name_08Z_24, \
+                     filename_20Z, TS_prefix_20Z, \
+                     NCEP_path_20Z, EC_path_20Z, GRAPES_path_20Z, \
+                     output_name_20Z_03, output_name_20Z_06, output_name_20Z_24
 
 from sys import path, argv
 path.insert(0, lib_path)
@@ -41,6 +47,14 @@ def main(delta_day, day0, key, lead='03'):
         subpath = '/pre03/'
         output_name_08Z = output_name_08Z_03
         output_name_20Z = output_name_20Z_03
+        
+    elif lead == '06':
+        fcst_keys = fcst_keys_06
+        tssc_keys = tssc_keys_06
+        subpath = '/pre06/'
+        output_name_08Z = output_name_08Z_06
+        output_name_20Z = output_name_20Z_06
+        
     else:
         fcst_keys = fcst_keys_24
         tssc_keys = tssc_keys_24
@@ -67,11 +81,14 @@ def main(delta_day, day0, key, lead='03'):
     
     # UTC time corrections & filename creation
     date_ref = datetime.utcnow()+relativedelta(days=delta_day)
+    
+    # Use yesterday's forecast for 20Z
     if key == 20:
-      date_ref_delay = date_ref -relativedelta(days=1) # use yesterday's forecast
-      
+        date_ref_delay = date_ref -relativedelta(days=1) 
+        
+    # Speed-up 08Z starting time
     else:
-      date_ref_delay = date_ref
+        date_ref_delay = date_ref
       
     date_BJ = date_ref_delay+relativedelta(hours=8+2) # test with 2-hour ahead opt
     
@@ -92,7 +109,7 @@ def main(delta_day, day0, key, lead='03'):
     # =========== import gridded data =========== #
 
     ## Initializing dictionaries
-
+    
     cmpt_keys = ['EC', 'NCEP', 'GRAPES']
 
     dict_var = {}; dict_interp = {}; dict_header = {}
@@ -140,11 +157,12 @@ def main(delta_day, day0, key, lead='03'):
         for fcst_key in fcst_keys:
 
             lead = np.float(fcst_key)
-
-            if lead%24 == 0:
-                subpath = '/pre24/'
-            else:
-                subpath = '/pre03/'
+            
+#             # subpath for TS
+#             if lead%24 == 0:
+#                 subpath = '/pre24/'
+#             else:
+#                 subpath = '/pre03/'
 
             temp_name = name+subpath+datetime.strftime(date_BJ, filename)+fcst_key
             dict_latlon[cmpt_keys[i]][fcst_key] = mt.micaps_import(temp_name, export_data=False)
@@ -156,7 +174,6 @@ def main(delta_day, day0, key, lead='03'):
     for key, val in dict_var.items():
         for fcst_key in fcst_keys:
             dict_interp[key][fcst_key] = mt.interp2d_wraper(dict_latlon[key][fcst_key][0], dict_latlon[key][fcst_key][1], val[fcst_key], lon, lat)
-
 
     print('\tExtracting TS for {} mm events'.format(prec_keys_TS))
 
@@ -253,6 +270,7 @@ def main(delta_day, day0, key, lead='03'):
     return date_ref.day
 
 day_out = main(int(argv[1]), int(argv[2]), int(argv[3]), lead='03')
+day_out = main(int(argv[1]), int(argv[2]), int(argv[3]), lead='06')
 day_out = main(int(argv[1]), int(argv[2]), int(argv[3]), lead='24')
 
 with open('shaG_history.log', 'w') as fp:
