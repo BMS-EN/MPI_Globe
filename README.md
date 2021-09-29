@@ -10,6 +10,6 @@ The post-processing routine is operated two times per day on 00 and 12 UTC (08 a
 
 # Contributors
 
-* Yingkai Sha <yingkai@eoas.ubc.ca>
+* Yingkai Sha <<yingkai@eoas.ubc.ca>>
 * Uji Murakumo
 
