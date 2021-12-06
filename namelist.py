@@ -1,7 +1,7 @@
 lib_path = 'libs/'
 # =============== Domain settings =============== #
-resy      = 0.125        # output latitude grid spacing
-resx      = 0.125        # output longitude grid spacing
+resy      = 0.1        # output latitude grid spacing
+resx      = 0.1        # output longitude grid spacing
 
 latlim    = [-90, 90]    # the latitude range of the domain
 lonlim    = [0, 359.875] # the longitude range of the domain
