@@ -262,7 +262,7 @@ def main(date_ref, day0, key, lead='03'):
 i = 0
 
 date_ref = datetime(2018, 3, 1, 0)
-N_days
+N_days = 365
 
 while i < N_days:
     run_single_day(date_ref, 0)
