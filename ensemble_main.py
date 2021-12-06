@@ -291,7 +291,12 @@ def main(delta_day, day0, key, lead='03'):
         precip50 = (W_EC*data50_EC + W_NCEP*data50_NCEP + W_GRAPES*data50_GRAPES)/(W_EC+W_NCEP+W_GRAPES)
 
         output[fcst_keys[i]] = precip0 + precip25 + precip50
-
+        
+        # ===================== #
+        # 0.1 truncation
+        output[fcst_keys[i]] = np.round(output[fcst_keys[i]], 1)
+        # ===================== #
+        
     # Preparing MICAPS file output
     for fcst_key in fcst_keys:
         metadata = mt.micaps_change_header(lon.shape, dict_header[fcst_key], lonlim, latlim)
