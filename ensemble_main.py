@@ -41,6 +41,10 @@ def main(delta_day, day0, key, lead='03'):
     '''
     The main routine of ensemble precipitation post-porcessing. 
     '''
+    
+    flag_all_pass = True
+    fcst_keys_missing = []
+    
     if lead == '03':
         fcst_keys = fcst_keys_03
         tssc_keys = tssc_keys_03
@@ -130,8 +134,12 @@ def main(delta_day, day0, key, lead='03'):
             temp = mt.micaps_import(temp_name)
 
             if temp == False:
-                print(temp_name+' not found. Exit ...')
-                return day0
+                print(temp_name+' not found. Skip ...')
+                flag_all_pass = False
+                fcst_keys_missing.append(fcst_key)
+                continue;
+                
+                #return day0
             else:
                 dict_var[cmpt_keys[i]][fcst_key] = temp[2]
 
@@ -147,7 +155,12 @@ def main(delta_day, day0, key, lead='03'):
         print(temp[3][0])
         
         dict_header[fcst_key] = temp[3]
-
+    
+    # ----- 
+    # subtrack unavailable forecast lead times
+    fcst_keys = [i for i in fcst_keys if not i in fcst_keys_missing or fcst_keys_missing.remove(i)]
+    # ----- 
+    
     # Get latlon info
     dict_latlon = {}
     for i, name in enumerate(name_today):
@@ -244,10 +257,30 @@ def main(delta_day, day0, key, lead='03'):
         # 0, 25, 50 mm cases
         # initialization (three sets of weights: [0, 25, 50])
         W0 = 0.0; W25 = 0.0; W50 = 0.0
-
-        W_EC = W[thres][tssc_keys[i]]['EC']
-        W_NCEP = W[thres][tssc_keys[i]]['NCEP']
-        W_GRAPES = W[thres][tssc_keys[i]]['GRAPES']
+        
+        # checking TS status
+        
+        flag_TS_exist = True
+        if 'EC' in W[thres][tssc_keys[i]].keys() is False:
+            print('Fcst time {}: EC TS missing'.format(fcst_keys[i]))
+            flag_TS_exist = False
+            
+        if 'NCEP' in W[thres][tssc_keys[i]].keys() is False:
+            print('Fcst time {}: NCEP TS missing'.format(fcst_keys[i]))
+            flag_TS_exist = False
+        
+        if 'GRAPES' in W[thres][tssc_keys[i]].keys() is False:
+            print('Fcst time {}: GRAPES TS missing'.format(fcst_keys[i]))
+            flag_TS_exist = False
+        
+        if flag_TS_exist:
+            W_EC = W[thres][tssc_keys[i]]['EC']
+            W_NCEP = W[thres][tssc_keys[i]]['NCEP']
+            W_GRAPES = W[thres][tssc_keys[i]]['GRAPES']
+        else:
+            W_EC = 1/3
+            W_NCEP = 1/3
+            W_GRAPES = 1/3
 
         data0_EC, data25_EC, data50_EC = subtrack_precip_lev(dict_interp['EC'][fcst_keys[i]])
         data0_NCEP, data25_NCEP, data50_NCEP = subtrack_precip_lev(dict_interp['NCEP'][fcst_keys[i]])
@@ -266,8 +299,11 @@ def main(delta_day, day0, key, lead='03'):
 
     print('Ensemble post-processing complete')
 
-    # =========================================== #    
-    return date_ref.day
+    # =========================================== #
+    if flag_all_pass:
+        return date_ref.day
+    else:
+        return day0
 
 day_out = main(int(argv[1]), int(argv[2]), int(argv[3]), lead='03')
 day_out = main(int(argv[1]), int(argv[2]), int(argv[3]), lead='06')
