@@ -261,15 +261,15 @@ def main(delta_day, day0, key, lead='03'):
         # checking TS status
         
         flag_TS_exist = True
-        if 'EC' in W[thres][tssc_keys[i]].keys() is False:
+        if not 'EC' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: EC TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
             
-        if 'NCEP' in W[thres][tssc_keys[i]].keys() is False:
+        if not 'NCEP' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: NCEP TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
         
-        if 'GRAPES' in W[thres][tssc_keys[i]].keys() is False:
+        if not 'GRAPES' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: GRAPES TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
         
