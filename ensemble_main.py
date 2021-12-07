@@ -265,14 +265,17 @@ def main(delta_day, day0, key, lead='03'):
         if not 'EC' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: EC TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
+            flag_all_pass = False
             
         if not 'NCEP' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: NCEP TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
+            flag_all_pass = False
         
         if not 'GRAPES' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: GRAPES TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
+            flag_all_pass = False
         
         if flag_TS_exist:
             W_EC = W[thres][tssc_keys[i]]['EC']
