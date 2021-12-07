@@ -1,25 +1,75 @@
 lib_path = 'libs/'
 # =============== Domain settings =============== #
-resy      = 0.5        # output latitude grid spacing
-resx      = 0.5        # output longitude grid spacing
-latlim    = [1, 59]    # the latitude range of the domain
-lonlim    = [71, 139]  # the longitude range of the domain
-# =========== Ensemble forecast keys ============ #
-prec_keys = ['25', '50']                 # Keys of precipitation ranges
-fcst_keys_20Z = ['036', '060', '084', '108', '132', '156', '180', '204', '228', '240'] # Keys of objective analysis
-fcst_keys_08Z = ['024', '048', '072', '096', '120', '144', '168', '192', '216', '240'] # Keys of objective analysis
-tssc_keys_20Z = ['024', '048', '072', '096', '120', '144', '168', '192', '216', '240'] # Keys of forecast scores
-tssc_keys_08Z = ['024', '048', '072', '096', '120', '144', '168', '192', '216', '240'] # Keys of forecast scores
+resy      = 0.1        # output latitude grid spacing
+resx      = 0.1        # output longitude grid spacing
+
+latlim    = [-90, 90]    # the latitude range of the domain
+lonlim    = [0, 359.875] # the longitude range of the domain
+
+# =========== calibration settings ============ #
+
+prec_keys_TS = ['50',] # Lowest Thresholds for TS weighting
+
+# forecast lead times of gridded objective analysis
+fcst_keys_03 = ['003', '006', '009', '012', '015', '018', '021', '024', 
+                '027' ,'030', '033', '036', '039', '042', '045', '048', 
+                '051', '054', '057', '060', '063', '066', '069', '072', 
+                '075', '081', '087', '093', '099', '105', '111', '117', 
+                '123', '129', '135', '141', '147', '153', '159', '165', 
+                '171', '177', '183', '189', '195', '201', '207', '213', 
+                '219', '225', '231', '237']
+
+fcst_keys_06 = ['006', '012', '018', '024', '030', '036', '042', '048',
+                '054', '060', '066', '072', '078', '084', '090', '096',
+                '102', '108', '114', '120', '126', '132', '138', '144',
+                '150', '156', '162', '168', '174', '180', '186', '192',
+                '198', '204', '210', '216', '222', '228', '234', '240']
+
+fcst_keys_24 = ['024', '036', '048', '060', '072', '084', '096', '108',   
+                '120', '132', '144', '156', '168', '180', '192', '204',           
+                '216', '228', '240']
+
+# forecast lead times of scores (weights)
+tssc_keys_03 = ['024', '024', '024', '024', '024', '024', '024', '024', 
+                '048' ,'048', '048', '048', '048', '048', '048', '048', 
+                '072', '072', '072', '072', '072', '072', '072', '072', 
+                '096', '096', '096', '096', '120', '120', '120', '120', 
+                '144', '144', '144', '144', '168', '168', '168', '168', 
+                '192', '192', '192', '192', '216', '216', '216', '216', 
+                '240', '240', '240', '240']
+
+tssc_keys_06 = ['024', '024', '024', '024', '048', '048', '048', '048',
+                '072', '072', '072', '072', '096', '096', '096', '096',
+                '120', '120', '120', '120', '144', '144', '144', '144',
+                '168', '168', '168', '168', '192', '192', '192', '192',
+                '216', '216', '216', '216', '240', '240', '240', '240']
+
+tssc_keys_24 = ['024', '048', '048', '072', '072', '096', '096', '120', 
+               '120', '144', '144', '168', '168', '192', '192', '216', 
+              '216', '240', '240']
+
 # ================== File path ================== #
-TS_perfix = '%y%m%d08' # The perfix of TS
-TS_path   = 'U:/'
-ENS_path_20Z = 'Z:/data/qpf_cal/ensemble/ecmf_24h_optimal_quantile/%Y%m%d12.'
-ENS_path_08Z = 'Z:/data/qpf_cal/ensemble/ecmf_24h_optimal_quantile/%Y%m%d00.'
-OTS_path_20Z = 'V:/output/FZMOS/%y%m%d20.'
-OTS_path_08Z = 'V:/output/FZMOS/%y%m%d08.'
+
+TS_prefix_08Z = '%y%m%d08' # The prefix of TS
+TS_prefix_20Z = '%y%m%d20'
+TS_path   = 'S:/model/TS/'
+
+EC_path_08Z = 'S:/model/ECMWF_GLB/%Y%m%d08'
+NCEP_path_08Z = 'S:/model/NCEP_GLB/%Y%m%d08'
+GRAPES_path_08Z = 'S:/model/GRAPES-GLB/%Y%m%d08'
+filename_08Z = '%Y%m%d08.'
+
+EC_path_20Z = 'S:/model/ECMWF_GLB/%Y%m%d20'
+NCEP_path_20Z = 'S:/model/NCEP_GLB/%Y%m%d20'
+GRAPES_path_20Z = 'S:/model/GRAPES-GLB/%Y%m%d20'
+filename_20Z = '%Y%m%d20.'
+
 # Output filename
-tag_name = 'MPI' # the name appears in the micaps file header
-output_name_20Z = 'T:/TEST/%Y%m%d20_'
-output_name_08Z = 'T:/TEST/%Y%m%d08_'
+output_name_08Z_03 = 'S:/mpi_globe/pre03/%Y%m%d08_'
+output_name_20Z_03 = 'S:/mpi_globe/pre03/%Y%m%d20_'
 
+output_name_08Z_06 = 'S:/mpi_globe/pre06/%Y%m%d08_'
+output_name_20Z_06 = 'S:/mpi_globe/pre06/%Y%m%d20_'
 
+output_name_08Z_24 = 'S:/mpi_globe/pre24/%Y%m%d08_'
+output_name_20Z_24 = 'S:/mpi_globe/pre24/%Y%m%d20_'

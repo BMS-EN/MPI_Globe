@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # import keywords from the namelist
-from namelist import lib_path, prec_keys_TS, TS_path, lonlim, latlim, \
+from namelist_history import lib_path, prec_keys_TS, TS_path, lonlim, latlim, \
                      fcst_keys_03, fcst_keys_06, fcst_keys_24, \
                      tssc_keys_03, tssc_keys_06, tssc_keys_24, \
                      filename_08Z, TS_prefix_08Z, \
@@ -265,7 +265,8 @@ date_ref = datetime(2018, 3, 1, 0) # <--- start date
 N_days = 365 # <--- number of days
 
 while i < N_days:
-    run_single_day(date_ref, 0)
+    main(date_ref, 0, key=20, lead='20')
+    #run_single_day(date_ref, 0)
     date_ref += relativedelta(days=1)
     print(date_ref)
     i += 1
