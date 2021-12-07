@@ -55,12 +55,16 @@ def micaps_import(filename, export_data=True):
     # read raw txt file
     if np.logical_not(exists(filename)):
         return False 
+    
     with open(filename, encoding='windows-1252') as f:
         content = f.readlines()
+        
     content = [x.strip('\n') for x in content]
     content = [x.strip('\r') for x in content] 
+    
     # get header info
     keys = content[1].split()
+    
     #print(keys)
     dlon = np.array(keys[6]).astype(np.float)
     dlat = np.array(keys[7]).astype(np.float)
@@ -68,8 +72,10 @@ def micaps_import(filename, export_data=True):
     lon1 = np.array(keys[9]).astype(np.float)
     lat0 = np.array(keys[10]).astype(np.float)
     lat1 = np.array(keys[11]).astype(np.float)
+    
     # create lat/lon reference
     gridx, gridy = genrate_grid(lonlim=[lon0, lon1], latlim=[lat0, lat1], resx=dlon, resy=dlat)
+    
     if export_data:
         # reshape variables
         num = []
@@ -78,6 +84,7 @@ def micaps_import(filename, export_data=True):
         var = np.array(num).astype(np.float).reshape(gridx.shape)
         # return
         return gridx, gridy, var, content[:2]
+    
     else:
         return gridx, gridy
 

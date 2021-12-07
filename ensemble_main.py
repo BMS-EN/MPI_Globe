@@ -135,6 +135,7 @@ def main(delta_day, day0, key, lead='03'):
 
             if temp == False:
                 print(temp_name+' not found. Skip ...')
+                print('Skip {}'.format(fcst_key))
                 flag_all_pass = False
                 fcst_keys_missing.append(fcst_key)
                 continue;
