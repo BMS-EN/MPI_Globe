@@ -94,7 +94,12 @@ def main(delta_day, day0, key, lead='03'):
     else:
         date_ref_delay = date_ref
       
-    date_BJ = date_ref_delay+relativedelta(hours=8+2) # test with 2-hour ahead opt
+    date_BJ = date_ref_delay+relativedelta(hours=8) # test with 2-hour ahead opt
+    
+    hour_BJ = date_BJ.hour
+    if (hour_BJ >= 18 and key == 8) or (hour_BJ >= 6 and key == 20):
+        print("Stop operational attemps ...")
+        return date_ref.day        
     
     print('Ensemble post-processing starts at ['+date_ref.strftime('%Y%m%d-%H:%M%p')+'] UTC')
     
@@ -134,7 +139,7 @@ def main(delta_day, day0, key, lead='03'):
             temp = mt.micaps_import(temp_name)
 
             if temp == False:
-                print(temp_name+' not found. Skip ...')
+                print(temp_name+' not found.')
                 print('Skip {}'.format(fcst_key))
                 flag_all_pass = False
                 fcst_keys_missing.append(fcst_key)
@@ -209,13 +214,13 @@ def main(delta_day, day0, key, lead='03'):
             # saving weights to the dictionary
             # case: no TS files (flag_TS=False)
             if np.logical_not(flag_TS):
-                print("TS files do not exist. Attempting one day backward")
+                print("TS file not found. Attempting one day backward")
 
                 date_temp = date_ref - relativedelta(days=int(tssc_key)/24+2)
                 data_ma, flag_TS = et.read_ts(date_temp.strftime(TS_prefix), TS_path+prec_key+'/', lead=tssc_key)
 
                 if np.logical_not(flag_TS):
-                    print("TS files do not exist. Skip.") 
+                    print("\tTS file not found. Skip.") 
 
                 #return day0 # <--- exit if no TS files
 
@@ -228,7 +233,7 @@ def main(delta_day, day0, key, lead='03'):
                 flag_zero = np.sum(0 == (data_ma.values[-1, 1:].astype(np.float)) ) >= 3
 
                 if flag_nan or flag_zero:
-                    print('Warning: TS filled with NaNs or zeros, use average (TS = 1/3).')
+                    print('Warning: TS filled with NaNs or zeros.')
                     for cmpt_key in cmpt_keys:
                         W[prec_key][tssc_key][cmpt_key] = 1/3
                     flag_heavy = False
@@ -265,17 +270,14 @@ def main(delta_day, day0, key, lead='03'):
         if not 'EC' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: EC TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
-            #flag_all_pass = False
             
         if not 'NCEP' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: NCEP TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
-            #flag_all_pass = False
         
         if not 'GRAPES' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: GRAPES TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
-            #flag_all_pass = False
         
         if flag_TS_exist:
             W_EC = W[thres][tssc_keys[i]]['EC']
