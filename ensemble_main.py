@@ -94,12 +94,7 @@ def main(delta_day, day0, key, lead='03'):
     else:
         date_ref_delay = date_ref
       
-    date_BJ = date_ref_delay+relativedelta(hours=8) # test with 2-hour ahead opt
-    
-    hour_BJ = date_BJ.hour
-    if (hour_BJ >= 18 and key == 8) or (hour_BJ >= 6 and key == 20):
-        print("Stop operational attemps ...")
-        return date_ref.day        
+    date_BJ = date_ref_delay+relativedelta(hours=8+2) # test with 2-hour ahead opt
     
     print('Ensemble post-processing starts at ['+date_ref.strftime('%Y%m%d-%H:%M%p')+'] UTC')
     
@@ -139,13 +134,13 @@ def main(delta_day, day0, key, lead='03'):
             temp = mt.micaps_import(temp_name)
 
             if temp == False:
-                print(temp_name+' not found.')
-                print('Skip {}'.format(fcst_key))
-                flag_all_pass = False
-                fcst_keys_missing.append(fcst_key)
-                continue;
+#                 print(temp_name+' not found. Skip ...')
+#                 print('Skip {}'.format(fcst_key))
+#                 flag_all_pass = False
+#                 fcst_keys_missing.append(fcst_key)
+#                 continue;
                 
-                #return day0
+                return day0
             else:
                 dict_var[cmpt_keys[i]][fcst_key] = temp[2]
 
@@ -156,19 +151,15 @@ def main(delta_day, day0, key, lead='03'):
         else:
             ini_time = datetime(date_BJ.year, date_BJ.month, date_BJ.day, 8)
             fcst_time_ = ini_time + relativedelta(hours=np.float(fcst_key))
-        print(fcst_time_)
-        
-        print(temp[3][0])
-        print(fcst_key + datetime.strftime(fcst_time_, '_%Y%m%d%H'))
+
         temp[3][0] += fcst_key + datetime.strftime(fcst_time_, '_%Y%m%d%H')
         print(temp[3][0])
         
         dict_header[fcst_key] = temp[3]
     
     # ----- 
-    # subtrack unavailable forecast lead times
-    fcst_keys_missing = list(set(fcst_keys_missing))
-    fcst_keys = [i for i in fcst_keys if not i in fcst_keys_missing or fcst_keys_missing.remove(i)]
+#     # subtrack unavailable forecast lead times
+#     fcst_keys = [i for i in fcst_keys if not i in fcst_keys_missing or fcst_keys_missing.remove(i)]
     # ----- 
     
     # Get latlon info
@@ -218,13 +209,13 @@ def main(delta_day, day0, key, lead='03'):
             # saving weights to the dictionary
             # case: no TS files (flag_TS=False)
             if np.logical_not(flag_TS):
-                print("TS file not found. Attempting one day backward")
+                print("TS files do not exist. Attempting one day backward")
 
                 date_temp = date_ref - relativedelta(days=int(tssc_key)/24+2)
                 data_ma, flag_TS = et.read_ts(date_temp.strftime(TS_prefix), TS_path+prec_key+'/', lead=tssc_key)
 
                 if np.logical_not(flag_TS):
-                    print("\tTS file not found. Skip.") 
+                    print("TS files do not exist. Skip.") 
 
                 #return day0 # <--- exit if no TS files
 
@@ -237,7 +228,7 @@ def main(delta_day, day0, key, lead='03'):
                 flag_zero = np.sum(0 == (data_ma.values[-1, 1:].astype(np.float)) ) >= 3
 
                 if flag_nan or flag_zero:
-                    print('Warning: TS filled with NaNs or zeros.')
+                    print('Warning: TS filled with NaNs or zeros, use average (TS = 1/3).')
                     for cmpt_key in cmpt_keys:
                         W[prec_key][tssc_key][cmpt_key] = 1/3
                     flag_heavy = False
@@ -274,14 +265,17 @@ def main(delta_day, day0, key, lead='03'):
         if not 'EC' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: EC TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
+            #flag_all_pass = False
             
         if not 'NCEP' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: NCEP TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
+            #flag_all_pass = False
         
         if not 'GRAPES' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: GRAPES TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
+            #flag_all_pass = False
         
         if flag_TS_exist:
             W_EC = W[thres][tssc_keys[i]]['EC']
@@ -326,4 +320,3 @@ day_out = main(int(argv[1]), int(argv[2]), int(argv[3]), lead='24')
 
 with open('shaG_history.log', 'w') as fp:
     fp.write(str(day_out).zfill(2)) # exporting the day of completion (and where to restart if fails)
-
