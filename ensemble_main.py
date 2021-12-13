@@ -156,7 +156,10 @@ def main(delta_day, day0, key, lead='03'):
         else:
             ini_time = datetime(date_BJ.year, date_BJ.month, date_BJ.day, 8)
             fcst_time_ = ini_time + relativedelta(hours=np.float(fcst_key))
-
+        print(fcst_time_)
+        
+        print(temp[3][0])
+        print(fcst_key + datetime.strftime(fcst_time_, '_%Y%m%d%H'))
         temp[3][0] += fcst_key + datetime.strftime(fcst_time_, '_%Y%m%d%H')
         print(temp[3][0])
         
