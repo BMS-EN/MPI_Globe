@@ -31,6 +31,6 @@ while $run; do
         fi
     else
         echo 'BASH: Post-processing completed.'
-        #sleep 60
+        sleep 600
     fi
 done
