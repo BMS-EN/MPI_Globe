@@ -169,6 +169,13 @@ def main(delta_day, day0, key, lead='03'):
     # subtrack unavailable forecast lead times
     fcst_keys_missing = list(set(fcst_keys_missing))
     fcst_keys = [i for i in fcst_keys if not i in fcst_keys_missing or fcst_keys_missing.remove(i)]
+    if len(fcst_keys) == 0:
+        print("No fcst files available. ")
+        if flag_fast_forward:
+            return date_ref.day
+        else:
+            return day0
+        
     # ----- 
     
     # Get latlon info
