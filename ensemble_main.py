@@ -43,6 +43,8 @@ def main(delta_day, day0, key, lead='03'):
     '''
     
     flag_all_pass = True
+    flag_fast_forward = False
+    
     fcst_keys_missing = []
     
     if lead == '03':
@@ -94,11 +96,17 @@ def main(delta_day, day0, key, lead='03'):
     else:
         date_ref_delay = date_ref
       
-    date_BJ = date_ref_delay+relativedelta(hours=8+2) # test with 2-hour ahead opt
+    date_BJ = date_ref_delay+relativedelta(hours=8+2) # set 2-hour ahead to speed up at new forecast days 
     
     print('Ensemble post-processing starts at ['+date_ref.strftime('%Y%m%d-%H:%M%p')+'] UTC')
     
     print('date_ref: {}\ndate_ref_delay: {}\ndate_BJ: {}'.format(date_ref, date_ref_delay, date_BJ))
+    
+    hour_BJ = date_BJ.hour
+    
+    if (hour_BJ >= 18 and key == 8) or (hour_BJ >= 6 and key == 20):
+        print("Timeout. final attemp starts ...")
+        flag_fast_forward = True
     
     name_today = []
 
@@ -120,7 +128,9 @@ def main(delta_day, day0, key, lead='03'):
     dict_var = ini_dicts(dict_var, cmpt_keys)
     dict_interp = ini_dicts(dict_interp, cmpt_keys)
 
-    ## Fill dictionaries with data    
+    ## Fill dictionaries with data
+    temp_output_head = False
+    
     for fcst_key in fcst_keys:
 
         lead = np.float(fcst_key)
@@ -134,32 +144,31 @@ def main(delta_day, day0, key, lead='03'):
             temp = mt.micaps_import(temp_name)
 
             if temp == False:
-#                 print(temp_name+' not found. Skip ...')
-#                 print('Skip {}'.format(fcst_key))
-#                 flag_all_pass = False
-#                 fcst_keys_missing.append(fcst_key)
-#                 continue;
+                print(temp_name+' not found. Skip ...')
+                print('Skip {}'.format(fcst_key))
+                flag_all_pass = False
+                fcst_keys_missing.append(fcst_key)
                 
-                return day0
             else:
                 dict_var[cmpt_keys[i]][fcst_key] = temp[2]
+                
+                # modify the input file head and use it as the output file head
+                if key == 20:
+                    ini_time = datetime(date_BJ.year, date_BJ.month, date_BJ.day, 20)
+                    fcst_time_ = ini_time + relativedelta(hours=np.float(fcst_key))
+                else:
+                    ini_time = datetime(date_BJ.year, date_BJ.month, date_BJ.day, 8)
+                    fcst_time_ = ini_time + relativedelta(hours=np.float(fcst_key))
 
-        # modify the input file head and use it as the output file head
-        if key == 20:
-            ini_time = datetime(date_BJ.year, date_BJ.month, date_BJ.day, 20)
-            fcst_time_ = ini_time + relativedelta(hours=np.float(fcst_key))
-        else:
-            ini_time = datetime(date_BJ.year, date_BJ.month, date_BJ.day, 8)
-            fcst_time_ = ini_time + relativedelta(hours=np.float(fcst_key))
+                temp[3][0] += fcst_key + datetime.strftime(fcst_time_, '_%Y%m%d%H')
+                print(temp[3][0])
 
-        temp[3][0] += fcst_key + datetime.strftime(fcst_time_, '_%Y%m%d%H')
-        print(temp[3][0])
-        
-        dict_header[fcst_key] = temp[3]
+                dict_header[fcst_key] = temp[3]
     
     # ----- 
-#     # subtrack unavailable forecast lead times
-#     fcst_keys = [i for i in fcst_keys if not i in fcst_keys_missing or fcst_keys_missing.remove(i)]
+    # subtrack unavailable forecast lead times
+    fcst_keys_missing = list(set(fcst_keys_missing))
+    fcst_keys = [i for i in fcst_keys if not i in fcst_keys_missing or fcst_keys_missing.remove(i)]
     # ----- 
     
     # Get latlon info
@@ -171,12 +180,6 @@ def main(delta_day, day0, key, lead='03'):
         for fcst_key in fcst_keys:
 
             lead = np.float(fcst_key)
-            
-#             # subpath for TS
-#             if lead%24 == 0:
-#                 subpath = '/pre24/'
-#             else:
-#                 subpath = '/pre03/'
 
             temp_name = name+subpath+datetime.strftime(date_BJ, filename)+fcst_key
             dict_latlon[cmpt_keys[i]][fcst_key] = mt.micaps_import(temp_name, export_data=False)
@@ -265,18 +268,15 @@ def main(delta_day, day0, key, lead='03'):
         if not 'EC' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: EC TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
-            #flag_all_pass = False
-            
+
         if not 'NCEP' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: NCEP TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
-            #flag_all_pass = False
-        
+
         if not 'GRAPES' in W[thres][tssc_keys[i]].keys() is False:
             print('Fcst time {}: GRAPES TS missing'.format(fcst_keys[i]))
             flag_TS_exist = False
-            #flag_all_pass = False
-        
+
         if flag_TS_exist:
             W_EC = W[thres][tssc_keys[i]]['EC']
             W_NCEP = W[thres][tssc_keys[i]]['NCEP']
@@ -309,7 +309,10 @@ def main(delta_day, day0, key, lead='03'):
     print('Ensemble post-processing complete')
 
     # =========================================== #
-    if flag_all_pass:
+    if flag_fast_forward:
+        return date_ref.day
+    
+    elif flag_all_pass:
         return date_ref.day
     else:
         return day0
@@ -319,4 +322,4 @@ day_out = main(int(argv[1]), int(argv[2]), int(argv[3]), lead='06')
 day_out = main(int(argv[1]), int(argv[2]), int(argv[3]), lead='24')
 
 with open('shaG_history.log', 'w') as fp:
-    fp.write(str(day_out).zfill(2)) # exporting the day of completion (and where to restart if fails)
+    fp.write(str(day_out).zfill(2)) # exporting the day of completion (or where to restart if fails)
