@@ -90,7 +90,7 @@ def main(delta_day, day0, key, lead='03'):
     
     # Use yesterday's forecast for 20Z
     if key == 20:
-        date_ref_delay = date_ref -relativedelta(days=1) 
+        date_ref_delay = date_ref - relativedelta(days=1) 
         
     # Speed-up 08Z starting time
     else:
